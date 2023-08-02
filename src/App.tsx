@@ -1,73 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './App.css';
+import { observer } from 'mobx-react';
+import { useStore } from './app/store/store';
 
-// Define the interface for each translation history item
-interface TranslationItem {
-  from: string;
-  originalText: string;
-  translatedText: string;
-}
 
-function App() {
+const App: React.FC = observer(() => {
+  const { translateStore } = useStore();
   const [fromLanguage, setFromLanguage] = useState('en');
   const [toLanguage, setToLanguage] = useState('vi');
   const [inputText, setInputText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [translationHistory, setTranslationHistory] = useState<TranslationItem[]>([]);
 
   const handleTranslate = () => {
-    const apiUrl = 'http://localhost:5025/translate';
+    const creds = {
+      Text: inputText,
+      From: fromLanguage,
+      To: toLanguage,
+    };
 
-    axios
-      .post(apiUrl, {
-        text: inputText,
-        from: fromLanguage,
-        to: toLanguage,
-      })
-      .then(response => {
-        const translatedText = response.data;
-        setTranslatedText(translatedText);
-
-        // Save the translation to history
-        const newHistory = [
-          ...translationHistory,
-          {
-            from: fromLanguage,
-            originalText: inputText,
-            translatedText: translatedText,
-          },
-        ];
-        setTranslationHistory(newHistory);
-        // Save history to local storage
-        localStorage.setItem('translationHistory', JSON.stringify(newHistory));
-      })
-      .catch(error => {
-        console.error('Error translating text:', error);
-      });
+    translateStore.translateText(creds);
   };
 
   const handleDeleteItem = (index: number) => {
-    const newHistory = [...translationHistory];
-    newHistory.splice(index, 1);
-    setTranslationHistory(newHistory);
-    // Save updated history to local storage
-    localStorage.setItem('translationHistory', JSON.stringify(newHistory));
+    translateStore.deleteItemFromHistory(index);
   };
 
   const handleDeleteAll = () => {
-    setTranslationHistory([]);
-    // Save empty history to local storage
-    localStorage.removeItem('translationHistory');
+    translateStore.deleteAllHistory();
   };
 
-  // Load history from local storage on component mount
   useEffect(() => {
-    const storedHistory = localStorage.getItem('translationHistory');
-    if (storedHistory) {
-      setTranslationHistory(JSON.parse(storedHistory));
-    }
-  }, []);
+    translateStore.loadHistoryFromLocalStorage();
+  }, [translateStore]);
 
   return (
     <div className="App">
@@ -111,19 +74,19 @@ function App() {
           />
         </div>
         <div
-          className={`translated-text-container ${translatedText ? 'show' : ''
+          className={`translated-text-container ${translateStore.translates ? 'show' : ''
             }`}
         >
-          {translatedText && (
+          {translateStore.translates && (
             <>
               <h3>Translated Text:</h3>
-              <p>{translatedText}</p>
+              <p>{translateStore.translates}</p>
             </>
           )}
         </div>
         <div className="translation-history">
           <h2>Translation History</h2>
-          {translationHistory.length > 0 ? (
+          {translateStore.translationHistory.length > 0 ? (
             <>
               <button onClick={handleDeleteAll} className="delete-all-btn">
                 Delete All History
@@ -138,7 +101,7 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {translationHistory.map((item, index) => (
+                  {translateStore.translationHistory.map((item, index) => (
                     <tr key={index}>
                       <td>{item.from}</td>
                       <td>{item.originalText}</td>
@@ -163,6 +126,6 @@ function App() {
       </header>
     </div>
   );
-}
+});
 
 export default App;
