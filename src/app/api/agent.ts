@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { TranslateFormValues } from '../models/translate';
 
 const sleep = (delay: number) => {
@@ -19,7 +19,7 @@ const requests = {
 }
 
 const Translate = {
-    translateText: (translate: TranslateFormValues, from?: string, to?: string) => requests.post<any>(`translate/from=${from}&to=${to}`, translate)
+    translateText: (translate: TranslateFormValues, from?: string, to?: string) => requests.post<any>(`translate/to=${to}&from=${from}`, translate)
 }
 const agent = {
     Translate
