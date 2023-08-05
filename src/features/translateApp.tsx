@@ -15,15 +15,7 @@ function TranslateApp() {
             To: toLanguage,
         };
 
-        translateStore.translateText(creds);
-    };
-
-    const handleDeleteItem = (index: number) => {
-        translateStore.deleteItemFromHistory(index);
-    };
-
-    const handleDeleteAll = () => {
-        translateStore.deleteAllHistory();
+        translateStore.translateText(creds, fromLanguage, toLanguage);
     };
 
     useEffect(() => {

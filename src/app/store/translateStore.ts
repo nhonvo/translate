@@ -16,9 +16,9 @@ export default class TranslateStore {
         makeAutoObservable(this);
     }
 
-    translateText = async (creds: TranslateFormValues) => {
+    translateText = async (creds: TranslateFormValues, from?: string, to?: string) => {
         try {
-            const result = await agent.Translate.translateText(creds);
+            const result = await agent.Translate.translateText(creds, from, to);
             this.translates = result;
             
             this.addToHistory({

@@ -19,7 +19,7 @@ const requests = {
 }
 
 const Translate = {
-    translateText: (translate: TranslateFormValues) => requests.post<any>('translate', translate)
+    translateText: (translate: TranslateFormValues, from?: string, to?: string) => requests.post<any>(`translate/from=${from}&to=${to}`, translate)
 }
 const agent = {
     Translate
