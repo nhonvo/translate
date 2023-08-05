@@ -33,8 +33,8 @@ function TranslateApp() {
                         defaultValue={fromLanguage}
                         onChange={e => setFromLanguage(e.target.value)}
                     >
-                        <option value="en">English</option>
-                        <option value="vi">French</option>
+                        <option value="">Auto Detect</option>
+                        <option value="vi">Vietnamese</option>
                         {/* Add other language options here */}
                     </select>
                 </div>
@@ -50,7 +50,7 @@ function TranslateApp() {
                     onChange={e => setToLanguage(e.target.value)}
                 >
                     <option value="vi">Vietnamese</option>
-                    <option value="en">Spanish</option>
+                    <option value="en">English</option>
                     {/* Add other language options here */}
                 </select>
             </div>
